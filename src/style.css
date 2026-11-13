@@ -1,0 +1,267 @@
+:root {
+  --neon-cyan: #00f0ff;
+  --neon-pink: #ff2bd6;
+  --neon-blue: #2b7bff;
+  --neon-yellow: #ffe14d;
+  --panel-bg: rgba(8, 6, 24, 0.72);
+  --panel-border: rgba(0, 240, 255, 0.45);
+  --text: #e8f6ff;
+  --muted: #8aa3b8;
+  --good: #35ff8a;
+  --bad: #ff4d6d;
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #05030f;
+  color: var(--text);
+  font-family: var(--font);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#game-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+}
+
+kbd {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  padding: 1px 6px;
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  background: rgba(0, 240, 255, 0.08);
+}
+
+.hidden { display: none !important; }
+
+/* ================= HUD ================= */
+#hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;   /* clicks pass through to the game */
+  z-index: 10;
+}
+
+.hud-panel {
+  position: absolute;
+  top: 16px;
+  min-width: 190px;
+  padding: 12px 16px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.15);
+  backdrop-filter: blur(4px);
+}
+#hud-economy { left: 16px; }
+#hud-status  { right: 16px; min-width: 220px; }
+
+.hud-label { font-size: 11px; letter-spacing: 2px; color: var(--muted); }
+.hud-big {
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--neon-yellow);
+  text-shadow: 0 0 10px rgba(255, 225, 77, 0.6);
+  font-variant-numeric: tabular-nums;
+}
+.hud-big.bump { animation: bump 0.12s ease-out; }
+@keyframes bump { 50% { transform: scale(1.12); } }
+.hud-sub { font-size: 12px; color: var(--muted); }
+
+.hud-divider { height: 1px; margin: 8px 0; background: var(--panel-border); }
+.hud-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+#leaderboard { list-style: none; font-size: 13px; margin-top: 4px; }
+#leaderboard li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 1px 0;
+  font-variant-numeric: tabular-nums;
+}
+#leaderboard li.me { color: var(--neon-cyan); font-weight: 700; }
+
+.state-ok   { color: var(--good); }
+.state-bad  { color: var(--bad); }
+.state-air  { color: var(--neon-blue); }
+
+#hud-hints {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+#penalty-banner {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  font-weight: 800;
+  font-size: 18px;
+  color: #fff;
+  background: rgba(255, 77, 109, 0.85);
+  border-radius: 8px;
+  box-shadow: 0 0 24px rgba(255, 77, 109, 0.6);
+  animation: pulse 0.6s infinite alternate;
+}
+@keyframes pulse { to { box-shadow: 0 0 40px rgba(255, 77, 109, 0.9); } }
+
+/* ================= Pop-up layer ================= */
+#popup-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;   /* only the pop-up windows themselves catch input */
+  z-index: 20;
+}
+
+/* Generic fake "browser tab" window used by every minigame pop-up */
+.popup-window {
+  position: absolute;
+  pointer-events: auto;
+  width: 300px;
+  background: #11102a;
+  border: 1px solid var(--neon-pink);
+  border-radius: 8px;
+  box-shadow: 0 0 28px rgba(255, 43, 214, 0.35), 0 12px 30px rgba(0, 0, 0, 0.6);
+  animation: popIn 0.18s ease-out;
+  overflow: hidden;
+}
+@keyframes popIn { from { transform: scale(0.6); opacity: 0; } }
+
+.popup-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: linear-gradient(90deg, #2a0f3d, #13123a);
+  font-size: 12px;
+  font-weight: 700;
+}
+.popup-titlebar .dots { display: flex; gap: 4px; }
+.popup-titlebar .dots i {
+  width: 9px; height: 9px; border-radius: 50%; background: #444; display: block;
+}
+.popup-titlebar .dots i:first-child { background: var(--bad); }
+.popup-titlebar .title { flex: 1; }
+.popup-timer {
+  height: 3px;
+  background: var(--neon-pink);
+  transform-origin: left;
+}
+.popup-body { padding: 12px; }
+.popup-hint { font-size: 11px; color: var(--muted); margin-top: 8px; text-align: center; }
+
+/* ---- 4-letter word-guess minigame ---- */
+.word-grid { display: grid; gap: 5px; justify-content: center; }
+.word-row  { display: grid; grid-template-columns: repeat(4, 44px); gap: 5px; }
+.word-cell {
+  height: 44px;
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: 2px solid #3a3960;
+  border-radius: 4px;
+}
+.word-cell.filled  { border-color: #7a79a8; }
+.word-cell.hit     { background: #1fa34a; border-color: #1fa34a; }
+.word-cell.near    { background: #c9a227; border-color: #c9a227; }
+.word-cell.miss    { background: #2a2940; border-color: #2a2940; color: #777; }
+
+/* ---- Doodle "windshield" attack: full-screen scribble overlay ---- */
+.windshield {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;     /* you can still play through it — it just blocks your view */
+  transition: opacity 0.8s linear;
+}
+.windshield-tag {
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--neon-pink);
+  text-shadow: 0 0 8px var(--neon-pink);
+}
+
+/* ================= Start screen ================= */
+#start-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: radial-gradient(circle at center, rgba(43, 10, 70, 0.85), rgba(5, 3, 15, 0.95));
+}
+#start-screen h1 {
+  font-size: clamp(36px, 8vw, 72px);
+  font-weight: 900;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 20px var(--neon-cyan);
+}
+#start-screen h1 span { color: var(--neon-pink); text-shadow: 0 0 20px var(--neon-pink); }
+#start-screen p { color: var(--muted); }
+#start-btn {
+  padding: 12px 36px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #05030f;
+  background: var(--neon-cyan);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 20px var(--neon-cyan);
+}
+#start-btn:hover { background: #fff; }
+
+@media (max-width: 640px) {
+  .hud-panel { min-width: 0; padding: 8px 10px; }
+  #hud-status { min-width: 150px; }
+  .hud-big { font-size: 24px; }
+  #hud-hints { display: none; }
+  #penalty-banner { top: 38%; width: calc(100% - 32px); font-size: 14px; text-align: center; }
+}
+
+/* Floating "+1 🍪" feedback on click */
+.float-text {
+  position: fixed;
+  z-index: 30;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--neon-yellow);
+  text-shadow: 0 0 8px rgba(255, 225, 77, 0.8);
+  animation: floatUp 0.7s ease-out forwards;
+}
+@keyframes floatUp {
+  to { transform: translate(-50%, -160%); opacity: 0; }
+}

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TabOverload.io</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2307041a'/><path d='M20 75 L50 25 L80 75' stroke='%2300f0ff' stroke-width='10' fill='none'/></svg>" />
+</head>
+<body>
+  <!-- Three.js renders into this canvas -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- ===== HUD layer (pointer-events: none, except interactive bits) ===== -->
+  <div id="hud">
+    <!-- Top-left: economy -->
+    <section id="hud-economy" class="hud-panel">
+      <div class="hud-label">COOKIES</div>
+      <div id="cookie-count" class="hud-big">0</div>
+      <div class="hud-sub"><span id="cookie-rate">0.0</span> / sec passive</div>
+      <div class="hud-sub">+<span id="cookie-click">1</span> per click</div>
+    </section>
+
+    <!-- Top-right: leaderboard + status -->
+    <section id="hud-status" class="hud-panel">
+      <div class="hud-label">LEADERBOARD</div>
+      <ol id="leaderboard"></ol>
+      <div class="hud-divider"></div>
+      <div class="hud-row"><span>Speed</span><span id="stat-speed">0</span></div>
+      <div class="hud-row"><span>Distance</span><span id="stat-distance">0 m</span></div>
+      <div class="hud-row"><span>State</span><span id="stat-state" class="state-ok">RUNNING</span></div>
+    </section>
+
+    <!-- Bottom hint bar -->
+    <div id="hud-hints">
+      <kbd>Mouse</kbd> steer · <kbd>L-Click</kbd> cookie · <kbd>R-Click</kbd> ramp ·
+      <kbd>Space</kbd> pay to recover
+    </div>
+
+    <!-- Center-screen penalty banner -->
+    <div id="penalty-banner" class="hidden">
+      RAGDOLLED! Press <kbd>Space</kbd> (<span id="penalty-cost">25</span> 🍪) to recover
+    </div>
+  </div>
+
+  <!-- ===== Pop-up layer: minigames + opponent attacks get mounted here ===== -->
+  <div id="popup-layer"></div>
+
+  <!-- ===== Start screen ===== -->
+  <div id="start-screen">
+    <h1>TabOverload<span>.io</span></h1>
+    <p>Steer. Click. Build. Don't let the tabs win.</p>
+    <button id="start-btn">START RUN</button>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "taboverload",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.17.0",
+    "vite": "^6.0.0"
+  }
+}
